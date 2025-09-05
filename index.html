@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semana GameDev II - Play Again?</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 25% 25%, #00ffff11 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, #ff00ff11 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -30px) rotate(1deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(-1deg);
+            }
+        }
+
+        .glitch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg,
+                    transparent,
+                    transparent 98px,
+                    rgba(0, 255, 255, 0.02) 100px);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 0;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, #00ffff, #ffffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow:
+                0 0 30px #00ffff,
+                0 0 60px #ff00ff;
+            position: relative;
+            display: inline-block;
+            animation: textGlitch 3s ease-in-out infinite;
+        }
+
+        .logo::before {
+            content: 'SEMANA GAMEDEV II';
+            position: absolute;
+            top: 0;
+            left: 2px;
+            color: #00ffff;
+            z-index: -1;
+            animation: glitch1 2s linear infinite;
+        }
+
+        .logo::after {
+            content: 'SEMANA GAMEDEV II';
+            position: absolute;
+            top: 0;
+            left: -2px;
+            color: #ff00ff;
+            z-index: -2;
+            animation: glitch2 2s linear infinite;
+        }
+
+        @keyframes textGlitch {
+
+            0%,
+            100% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+        }
+
+        @keyframes glitch1 {
+
+            0%,
+            100% {
+                transform: translate(0);
+                opacity: 0.8;
+            }
+
+            10% {
+                transform: translate(-2px, -2px);
+                opacity: 0.7;
+            }
+
+            20% {
+                transform: translate(2px, 2px);
+                opacity: 0.9;
+            }
+
+            30% {
+                transform: translate(-2px, 2px);
+                opacity: 0.6;
+            }
+
+            40% {
+                transform: translate(2px, -2px);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes glitch2 {
+
+            0%,
+            100% {
+                transform: translate(0);
+                opacity: 0.7;
+            }
+
+            15% {
+                transform: translate(2px, -2px);
+                opacity: 0.6;
+            }
+
+            25% {
+                transform: translate(-2px, 2px);
+                opacity: 0.8;
+            }
+
+            35% {
+                transform: translate(2px, 2px);
+                opacity: 0.5;
+            }
+
+            45% {
+                transform: translate(-2px, -2px);
+                opacity: 0.7;
+            }
+        }
+
+        .subtitle {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: #ff00ff;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: neonPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            from {
+                text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+            }
+
+            to {
+                text-shadow: 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff;
+            }
+        }
+
+        .skull-icon {
+            font-size: 2rem;
+            color: #00ffff;
+            margin: 0 20px;
+            animation: bounce 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .accordion-container {
+            max-width: 800px;
+            margin: 0 auto;
+            gap: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .accordion-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            border-color: rgba(0, 255, 255, 0.6);
+            box-shadow:
+                0 12px 40px rgba(0, 255, 255, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .accordion-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .accordion-header:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+        }
+
+        .accordion-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+
+        .accordion-icon {
+            font-size: 1.5rem;
+            color: #00ffff;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+            color: #ff00ff;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+            padding: 30px;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .link-card {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .link-card:hover::before {
+            left: 100%;
+        }
+
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+            border-color: rgba(0, 255, 255, 0.5);
+        }
+
+        .link-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .link-description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+
+        .link-icon {
+            color: #00ffff;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .accordion-header {
+                padding: 20px;
+            }
+
+            .accordion-title {
+                font-size: 1.1rem;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pixel-border {
+            background:
+                linear-gradient(90deg, #00ffff 50%, transparent 50%),
+                linear-gradient(90deg, #ff00ff 50%, transparent 50%),
+                linear-gradient(0deg, #00ffff 50%, transparent 50%),
+                linear-gradient(0deg, #ff00ff 50%, transparent 50%);
+            background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+            background-size: 15px 2px, 15px 2px, 2px 15px, 2px 15px;
+            background-position: 0 0, 0 100%, 0 0, 100% 0;
+            animation: borderMove 4s linear infinite;
+        }
+
+        @keyframes borderMove {
+            0% {
+                background-position: 0 0, 0 100%, 0 0, 100% 0;
+            }
+
+            100% {
+                background-position: 30px 0, -30px 100%, 0 -30px, 100% 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-pattern"></div>
+    <div class="glitch-overlay"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">Semana GameDev II</h1>
+            <div class="subtitle">
+                <i class="fas fa-skull skull-icon"></i>
+                Play Again?
+                <i class="fas fa-skull skull-icon"></i>
+            </div>
+        </header>
+
+        <div class="accordion-container">
+            <div class="accordion-item pixel-border">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h2 class="accordion-title">
+                        <i class="fas fa-user-plus"></i>
+                        Links de Inscrições
+                    </h2>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="links-grid">
+                        <a href="forms.gle/bSwq8wL6SP7nARnS7" class="link-card">
+                            <div class="link-title">
+                                <i class="fas fa-gamepad link-icon"></i>
+                                Inscrição Campeonato
+                            </div>
+                            <div class="link-description">
+                                Inscreva-se para participar do campeonato da Semana GameDev II.
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item pixel-border">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h2 class="accordion-title">
+                        <i class="fas fa-scroll"></i>
+                        Regulamentos
+                    </h2>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="links-grid">
+                        <a href="https://drive.google.com/file/d/11rl22PSypYYBmibeq8abCXiwnjPvu5O7/view?usp=sharing"
+                            class="link-card">
+                            <div class="link-title">
+                                <i class="fas fa-file-alt link-icon"></i>
+                                Regulamento Valorant
+                            </div>
+                            <div class="link-description">
+                                Regras gerais do campeonato de Valorant.
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item pixel-border">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h2 class="accordion-title">
+                        <i class="fas fa-ellipsis-h"></i>
+                        Outros
+                    </h2>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="links-grid">
+                        <a href="https://semana-game-dev-torneio.vercel.app/" class="link-card">
+                            <div class="link-title">
+                                <i class="fas fa-gamepad link-icon"></i>
+                                Simulador de Força dos times do campeonato
+                            </div>
+                            <div class="link-description">
+                                Simulador para os times verificarem se sua formação está forte demais ou no ponto certo.
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleAccordion(header) {
+            const accordionItem = header.parentElement;
+            const content = header.nextElementSibling;
+            const isActive = accordionItem.classList.contains('active');
+
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            if (!isActive) {
+                accordionItem.classList.add('active');
+            }
+        }
+
+        function addRandomGlitch() {
+            const logo = document.querySelector('.logo');
+            logo.style.animation = 'none';
+            setTimeout(() => {
+                logo.style.animation = 'textGlitch 0.2s ease-in-out';
+                setTimeout(() => {
+                    logo.style.animation = 'textGlitch 3s ease-in-out infinite';
+                }, 200);
+            }, 100);
+        }
+
+        setInterval(addRandomGlitch, Math.random() * 5000 + 5000);
+
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.createElement('div');
+            cursor.style.position = 'fixed';
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursor.style.width = '4px';
+            cursor.style.height = '4px';
+            cursor.style.background = Math.random() > 0.5 ? '#00ffff' : '#ff00ff';
+            cursor.style.borderRadius = '50%';
+            cursor.style.pointerEvents = 'none';
+            cursor.style.zIndex = '9999';
+            cursor.style.opacity = '0.7';
+            cursor.style.transition = 'all 0.5s ease';
+
+            document.body.appendChild(cursor);
+
+            setTimeout(() => {
+                cursor.style.opacity = '0';
+                cursor.style.transform = 'scale(2)';
+                setTimeout(() => cursor.remove(), 500);
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>
